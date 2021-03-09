@@ -60,6 +60,8 @@ public:
 
     static L_CanvasObjType getType(QString name);
     static QString getTypeName(L_CanvasObjType type);
+    QPoint getPosition() const;
+
 public slots:
     void rotateRight();
     void rotateLeft ();
@@ -70,6 +72,7 @@ public slots:
     void decreaseHeight();
 
     void moveUp();
+    void moveUp2(int r);
     void moveDown();
     void moveLeft();
     void moveRight();

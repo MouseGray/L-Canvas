@@ -15,12 +15,12 @@ public:
 
     QString name();
 
-    L_TCanvasObject& object();
+    L_CanvasObject& object();
 
     void getTape(QVector<L_TaskObject*>& dist);
 private:
     QString m_name;
-    L_TCanvasObject m_canvasObject;
+    L_CanvasObject m_canvasObject;
 
     QVector<L_TaskObject*> m_subTaskObjects;
 };

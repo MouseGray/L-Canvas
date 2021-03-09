@@ -9,12 +9,12 @@ void L_TaskObject::toJSON(QJsonObject &json)
 {
     json.insert("name", m_name);
     QJsonObject obj;
-    m_canvasObject.toJSON(obj);
+    m_canvasObject->toJSON(obj);
     json.insert("object", obj);
 
     if(!m_subTaskObjects.isEmpty()) {
         QJsonArray array;
-        for(auto a: m_subTaskObjects){
+        for(auto a: qAsConst(m_subTaskObjects)){
             QJsonObject obj;
             a->toJSON(obj);
             array.push_back(obj);
@@ -32,8 +32,14 @@ bool L_TaskObject::fromJSON(QJsonObject &json)
     value = json["object"];
     if(!value.isObject()) return false;
     QJsonObject obj = value.toObject();
-    if(!m_canvasObject.fromJSON(obj)) return false;
-
+    
+    m_canvasObject = L_ShapeBuilder(obj["type"])
+                             .angle(obj["angle"])
+                             .color(obj["color"])
+                             .pos  (obj["position"])
+                             .size (obj["size"])
+                             .build(L_ShapeBuilder::Build::onlyValid);
+    
     value = json["sub"];
     if(value.isArray())
     {
@@ -53,7 +59,7 @@ QString L_TaskObject::name()
     return m_name;
 }
 
-L_CanvasObject &L_TaskObject::object()
+L_CanvasObject* L_TaskObject::object()
 {
     return m_canvasObject;
 }
@@ -61,5 +67,16 @@ L_CanvasObject &L_TaskObject::object()
 void L_TaskObject::getTape(QVector<L_TaskObject *> &dist)
 {
     dist.append(this);
-    for(auto a: m_subTaskObjects) a->getTape(dist);
+    for(auto a: qAsConst(m_subTaskObjects)) 
+        a->getTape(dist);
+}
+
+L_TaskObject *L_TaskObject::next()
+{
+    if (current < m_subTaskObjects.size()) {
+        current++;
+        return m_subTaskObjects[current - 1];
+    }
+    if (m_parentTaskObject)
+    return m_parentTaskObject->next();
 }

@@ -46,6 +46,12 @@ void L_CanvasObject::moveUp()
     emit changed();
 }
 
+void L_CanvasObject::moveUp2(int r)
+{
+    m_position.setY(qMin(m_position.y() + r, maxPos));
+    emit changed();
+}
+
 void L_CanvasObject::moveDown()
 {
     m_position.setY(qMax(m_position.y() - moveStep, minPos));
@@ -56,6 +62,11 @@ void L_CanvasObject::moveRight()
 {
     m_position.setX(qMin(m_position.x() + moveStep, maxPos));
     emit changed();
+}
+
+QPoint L_CanvasObject::getPosition() const
+{
+    return m_position;
 }
 
 void L_CanvasObject::moveLeft()
