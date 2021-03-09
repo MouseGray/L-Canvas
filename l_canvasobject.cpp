@@ -7,85 +7,94 @@ int L_CanvasObject::moveStep = 2;
 void L_CanvasObject::rotateRight()
 {
     m_angle = (m_angle + rotateStep) % 360;
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::rotateLeft()
 {
     m_angle = (m_angle - rotateStep + 360) % 360;
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::increaseWidth()
 {
     m_size.setWidth(qMin(m_size.width() + resizeStep, maxSize));
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::decreaseWidth()
 {
     m_size.setWidth(qMax(m_size.width() - resizeStep, minSize));
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::increaseHeight()
 {
     m_size.setHeight(qMin(m_size.height() + resizeStep, maxSize));
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::decreaseHeight()
 {
     m_size.setHeight(qMax(m_size.height() - resizeStep, minSize));
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::moveUp()
 {
     m_position.setY(qMin(m_position.y() + moveStep, maxPos));
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::moveDown()
 {
     m_position.setY(qMax(m_position.y() - moveStep, minPos));
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::moveRight()
 {
     m_position.setX(qMin(m_position.x() + moveStep, maxPos));
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::moveLeft()
 {
     m_position.setX(qMax(m_position.x() - moveStep, minPos));
-    changed();
+    emit changed();
+}
+
+L_CanvasObject::L_CanvasObject(L_CanvasObjType type, QColor color, int angle, QPoint pos, QSize size)
+{
+    m_type = type;
+    m_color = color;
+    m_angle = angle;
+    m_position = pos;
+    m_size = size;
 }
 
 void L_CanvasObject::paint(QColor color)
 {
     m_color = color;
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::setSize(QSize size)
 {
     m_size = size;
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::setPos(QPoint pos)
 {
     m_position = pos;
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::setSize(QPoint rPos)
 {
     m_size = QSize(rPos.x() - m_position.x(), rPos.y() - m_position.y());
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::setType(L_CanvasObjType type)
@@ -188,13 +197,13 @@ void L_CanvasObject::create(L_CanvasObjType type)
         m_size = QSize(3, 3);
         m_color = QColor(0, 0, 0);
     }
-    changed();
+    emit changed();
 }
 
 void L_CanvasObject::remove()
 {
     m_type = L_CanvasObjType::null;
-    changed();
+    emit changed();
 }
 
 L_CanvasObjType L_CanvasObject::getType(QString name)

@@ -37,6 +37,9 @@ public:
 
     L_CanvasObject() {};
 
+    L_CanvasObject(L_CanvasObjType type, QColor color,
+                   int angle, QPoint pos, QSize size);
+
     void paint (QColor color );
 
     void draw  (QPainter& painter, QPoint&& startPoint, L_CanvasObjSelect select = L_CanvasObjSelect::null);

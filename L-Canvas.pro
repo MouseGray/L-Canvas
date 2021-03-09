@@ -3,7 +3,7 @@ QT += gui core widgets
 TEMPLATE = lib
 DEFINES += LCANVAS_LIBRARY
 
-CONFIG += c++11
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -13,6 +13,7 @@ SOURCES += \
     l_canvas.cpp \
     l_canvasobject.cpp \
     l_container.cpp \
+    l_shapebuilder.cpp \
     l_task.cpp \
     l_taskobject.cpp \
     l_tcanvasobject.cpp
@@ -22,6 +23,7 @@ HEADERS += \
     l_canvas.h \
     l_canvasobject.h \
     l_container.h \
+    l_shapebuilder.h \
     l_task.h \
     l_taskobject.h \
     l_tcanvasobject.h
