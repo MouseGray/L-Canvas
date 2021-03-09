@@ -53,7 +53,7 @@ public:
     L_CanvasObjType type() const;
 
     void toJSON  (QJsonObject& json);
-    bool fromJSON(QJsonObject& json);
+    // bool fromJSON(QJsonObject& json);
 
     void create(L_CanvasObjType type);
     void remove();

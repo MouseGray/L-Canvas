@@ -2,6 +2,7 @@
 #define L_TASKOBJECT_H
 
 #include "l_tcanvasobject.h"
+#include "l_shapebuilder.h"
 
 #define SUCCESS(exp) ((exp) != -1)
 
@@ -15,14 +16,19 @@ public:
 
     QString name();
 
-    L_CanvasObject& object();
+    L_CanvasObject* object();
 
     void getTape(QVector<L_TaskObject*>& dist);
+
+    L_TaskObject* next();
 private:
     QString m_name;
-    L_CanvasObject m_canvasObject;
+    L_CanvasObject* m_canvasObject;
 
+    L_TaskObject* m_parentTaskObject;
     QVector<L_TaskObject*> m_subTaskObjects;
+
+    int current;
 };
 
 #endif // L_TASKOBJECT_H

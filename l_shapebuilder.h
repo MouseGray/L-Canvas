@@ -15,7 +15,7 @@ public:
         always,
         onlyValid
     };
-    L_ShapeBuilder(L_CanvasObjType type);
+    L_ShapeBuilder(const QJsonValue &jtype);
 
     L_ShapeBuilder& angle(const QJsonValue &jangle);
 

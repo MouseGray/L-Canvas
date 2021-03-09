@@ -143,56 +143,56 @@ void L_CanvasObject::toJSON(QJsonObject &json)
     json.insert("size",     size    );
 }
 
-bool L_CanvasObject::fromJSON(QJsonObject &json)
-{
-    QJsonValue value = json["type"];
-    if(!value.isString()) return false;
-    m_type = getType(value.toString());
+//bool L_CanvasObject::fromJSON(QJsonObject &json)
+//{
+//    QJsonValue value = json["type"];
+//    if(!value.isString()) return false;
+//    m_type = getType(value.toString());
 
-    if(m_type == L_CanvasObjType::null) return true;
+//    if(m_type == L_CanvasObjType::null) return true;
 
-    value = json["color"];
-    if(!value.isObject()) return false;
+//    value = json["color"];
+//    if(!value.isObject()) return false;
 
-    QJsonObject obj = value.toObject();
-    value = obj["r"];
-    if(!value.isDouble()) return false;
-    m_color.setRed(value.toInt());
-    value = obj["g"];
-    if(!value.isDouble()) return false;
-    m_color.setGreen(value.toInt());
-    value = obj["b"];
-    if(!value.isDouble()) return false;
-    m_color.setBlue(value.toInt());
+//    QJsonObject obj = value.toObject();
+//    value = obj["r"];
+//    if(!value.isDouble()) return false;
+//    m_color.setRed(value.toInt());
+//    value = obj["g"];
+//    if(!value.isDouble()) return false;
+//    m_color.setGreen(value.toInt());
+//    value = obj["b"];
+//    if(!value.isDouble()) return false;
+//    m_color.setBlue(value.toInt());
 
-    value = json["angle"];
-    if(!value.isDouble()) return false;
-    m_angle = value.toInt();
+//    value = json["angle"];
+//    if(!value.isDouble()) return false;
+//    m_angle = value.toInt();
 
-    value = json["position"];
-    if(!value.isObject()) return false;
+//    value = json["position"];
+//    if(!value.isObject()) return false;
 
-    obj = value.toObject();
-    value = obj["x"];
-    if(!value.isDouble()) return false;
-    m_position.setX(value.toInt());
-    value = obj["y"];
-    if(!value.isDouble()) return false;
-    m_position.setY(value.toInt());
+//    obj = value.toObject();
+//    value = obj["x"];
+//    if(!value.isDouble()) return false;
+//    m_position.setX(value.toInt());
+//    value = obj["y"];
+//    if(!value.isDouble()) return false;
+//    m_position.setY(value.toInt());
 
-    value = json["size"];
-    if(!value.isObject()) return false;
+//    value = json["size"];
+//    if(!value.isObject()) return false;
 
-    obj = value.toObject();
-    value = obj["width"];
-    if(!value.isDouble()) return false;
-    m_size.setWidth(value.toInt());
-    value = obj["height"];
-    if(!value.isDouble()) return false;
-    m_size.setHeight(value.toInt());
+//    obj = value.toObject();
+//    value = obj["width"];
+//    if(!value.isDouble()) return false;
+//    m_size.setWidth(value.toInt());
+//    value = obj["height"];
+//    if(!value.isDouble()) return false;
+//    m_size.setHeight(value.toInt());
 
-    return true;
-}
+//    return true;
+//}
 
 void L_CanvasObject::create(L_CanvasObjType type)
 {

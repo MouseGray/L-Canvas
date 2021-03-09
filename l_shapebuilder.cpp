@@ -1,12 +1,17 @@
 #include "l_shapebuilder.h"
 
-L_ShapeBuilder::L_ShapeBuilder(L_CanvasObjType type) :
-    _type(type),
+L_ShapeBuilder::L_ShapeBuilder(const QJsonValue &jtype) :
+    _type(L_CanvasObjType::null),
     _angle(0),
     _color(QColor(0, 0, 0)),
     _pos(QPoint(0, 0)),
     _size(QSize(0, 0))
-{ }
+{
+    if (jtype.isString())
+        _type = L_CanvasObject::getType(jtype.toString());
+    else
+        _invalid = true;
+}
 
 L_ShapeBuilder& L_ShapeBuilder::angle(const QJsonValue &jangle)
 {
