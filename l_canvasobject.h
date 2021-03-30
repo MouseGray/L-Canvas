@@ -31,53 +31,38 @@ class LCANVAS_EXPORT L_CanvasObject : public QObject
 {
     Q_OBJECT
 public:
+    static constexpr int FIELD_SIZE = 250;
+
     static int rotateStep;
     static int resizeStep;
     static int moveStep;
 
-    L_CanvasObject() {};
+    static const L_CanvasObject null_object;
+
+    L_CanvasObject() { qDebug() << "created object:" << "null"; };
 
     L_CanvasObject(L_CanvasObjType type, QColor color,
                    int angle, QPoint pos, QSize size);
 
-    void paint (QColor color );
+    ~L_CanvasObject() { qDebug() << "deleted object:" << getTypeName(m_type); }
 
-    void draw  (QPainter& painter, QPoint&& startPoint, L_CanvasObjSelect select = L_CanvasObjSelect::null);
 
-    void setSize(QSize size);
-    void setPos (QPoint pos);
 
-    void setSize(QPoint rPos);
+    void draw(QPainter& painter, const QPoint& startPoint, int UPP_X, int UPP_Y, L_CanvasObjSelect select = L_CanvasObjSelect::null);
 
-    void setType(L_CanvasObjType type);
     L_CanvasObjType type() const;
 
-    void toJSON  (QJsonObject& json);
-    // bool fromJSON(QJsonObject& json);
-
-    void create(L_CanvasObjType type);
-    void remove();
+    QJsonObject toJSON();
 
     static L_CanvasObjType getType(QString name);
     static QString getTypeName(L_CanvasObjType type);
     QPoint getPosition() const;
 
 public slots:
-    void rotateRight();
-    void rotateLeft ();
-
-    void increaseWidth();
-    void decreaseWidth();
-    void increaseHeight();
-    void decreaseHeight();
-
-    void moveUp();
-    void moveUp2(int r);
-    void moveDown();
-    void moveLeft();
-    void moveRight();
-signals:
-    void changed();
+    bool rotate(int degree);
+    bool resize(int width, int height);
+    bool move(int x, int y);
+    bool paint(QColor color);
 protected:
     int    m_angle    = 0;
 
@@ -88,11 +73,8 @@ protected:
 
     L_CanvasObjType m_type = L_CanvasObjType::null;
 
-    static const int minSize = 3;
-    static const int maxSize = 200;
-
-    static const int minPos = -200;
-    static const int maxPos = 200;
+    static constexpr int MIN_SIZE = 3;
+    static constexpr int MAX_SIZE = 100;
 };
 
 #endif // L_CANVASOBJECT_H

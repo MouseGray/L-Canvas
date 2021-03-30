@@ -1,16 +1,22 @@
 #include "l_shapebuilder.h"
 
-L_ShapeBuilder::L_ShapeBuilder(const QJsonValue &jtype) :
+L_ShapeBuilder::L_ShapeBuilder() :
     _type(L_CanvasObjType::null),
     _angle(0),
     _color(QColor(0, 0, 0)),
     _pos(QPoint(0, 0)),
-    _size(QSize(0, 0))
+    _size(QSize(0, 0)),
+    _invalid(false)
+{
+}
+
+L_ShapeBuilder &L_ShapeBuilder::type(const QJsonValue &jtype)
 {
     if (jtype.isString())
         _type = L_CanvasObject::getType(jtype.toString());
     else
         _invalid = true;
+    return *this;
 }
 
 L_ShapeBuilder& L_ShapeBuilder::angle(const QJsonValue &jangle)
@@ -27,19 +33,19 @@ L_ShapeBuilder& L_ShapeBuilder::color(const QJsonValue &jcolor)
     if (jcolor.isObject()) {
         auto obj = jcolor.toObject();
 
-        auto jred = obj["red"];
+        auto jred = obj["r"];
         if (jred.isDouble())
             _color.setRed(jred.toInt());
         else
             _invalid = true;
 
-        auto jgreen = obj["green"];
+        auto jgreen = obj["g"];
         if (jgreen.isDouble())
             _color.setGreen(jgreen.toInt());
         else
             _invalid = true;
 
-        auto jblue = obj["blue"];
+        auto jblue = obj["b"];
         if (jblue.isDouble())
             _color.setBlue(jblue.toInt());
         else

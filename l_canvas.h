@@ -21,9 +21,14 @@ public:
     //void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent (QPaintEvent  *event) override;
 
+    void resizeEvent(QResizeEvent *event) override;
+
     void setTask(L_Task* task);
 private:
     L_Task* m_task = nullptr;
+
+    float UPP_X = 1.0f;
+    float UPP_Y = 1.0f;
 };
 
 #endif // LCANVAS_H

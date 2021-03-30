@@ -1,41 +1,56 @@
 #ifndef L_TASK_H
 #define L_TASK_H
 
+#include "L_Canvas_global.h"
+
 #include <QObject>
 #include <QVector>
 #include <QDebug>
 
-#include "l_container.h"
+#include "l_taskobject.h"
 
 class LCANVAS_EXPORT L_Task : public QObject
 {
     Q_OBJECT
 public:
     explicit L_Task(QObject *parent = nullptr);
-    ~L_Task();
 
-    bool initialize(QJsonObject &json);
+    QJsonObject toJSON();
 
-    void toJSON  (QJsonObject& json);
-    bool fromJSON(QJsonObject& json);
+    // throws std::invalid_argument, std::bad_alloc
+    void fromJSON(const QJsonObject& json) noexcept(false);
 
-    inline QString title() const { return m_title; }
-    inline QString text()  const { return m_text;  }
+    inline QString title() const noexcept { return m_title; }
+    inline QString text()  const noexcept { return m_text;  }
+    inline QString name()  const { return m_data->name(); }
 
-    inline L_Container& container() { return m_container; }
+    inline bool hasValidData() const noexcept { return m_data != nullptr; };
+
+    L_TaskObject* data() const;
+
+    void next();
+    void previous();
+
+    L_TaskObject *current() const;
+
+    void push(L_CanvasObject* obj);
+    void pop();
+
+    void rotate(int degree);
+    void move(int x, int y);
+    void resize(int width, int height);
+    void paint(QColor color);
 signals:
     void changed();
 public slots:
     void changed_slot();
 private:
-    void _clear();
-
     QString m_title;
     QString m_text;
 
-    QVector<L_TaskObject*> m_objects;
+    L_TaskObject* m_data = nullptr;
 
-    L_Container m_container;
+    L_TaskObject* m_current = nullptr;
 };
 
 #endif // L_TASK_H

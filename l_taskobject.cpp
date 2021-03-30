@@ -1,82 +1,112 @@
 #include "l_taskobject.h"
 
-L_TaskObject::L_TaskObject()
-{
+#include <stdexcept>
 
+L_TaskObject::L_TaskObject(const QString &name, L_CanvasObject *object, std::list<oneget_ptr<L_TaskObject> > &sub)
+    : m_parentTaskObject(nullptr)
+{
+    m_name = name;
+    m_canvasObject = object;
+    for(auto& el: sub) {
+        m_subTaskObjects.push_back(el.get());
+        m_subTaskObjects.back()->m_parentTaskObject = this;
+    }
+
+    if (object != nullptr)
+        emit objectPushed();
+    qDebug() << "created tasobject:" << m_name;
 }
 
-void L_TaskObject::toJSON(QJsonObject &json)
+L_TaskObject::~L_TaskObject()
 {
-    json.insert("name", m_name);
-    QJsonObject obj;
-    m_canvasObject->toJSON(obj);
-    json.insert("object", obj);
+    qDebug() << "deleted tasobject:" << m_name;
 
-    if(!m_subTaskObjects.isEmpty()) {
-        QJsonArray array;
-        for(auto a: qAsConst(m_subTaskObjects)){
-            QJsonObject obj;
-            a->toJSON(obj);
-            array.push_back(obj);
+    delete m_canvasObject;
+    for(auto& el: m_subTaskObjects) delete el;
+}
+
+QJsonObject L_TaskObject::toJSON() const noexcept
+{
+    auto json = QJsonObject();
+    json.insert("name", m_name);
+
+    if (m_canvasObject != nullptr)
+        json.insert("object", m_canvasObject->toJSON());
+
+    if(!m_subTaskObjects.empty()) {
+        auto array = QJsonArray();
+        for(auto a: m_subTaskObjects) {
+            array.push_back(a->toJSON());
         }
         json.insert("sub", array);
     }
+
+    return json;
 }
 
-bool L_TaskObject::fromJSON(QJsonObject &json)
+void L_TaskObject::pushObject(L_CanvasObject* object)
 {
-    QJsonValue value = json["name"];
-    if(!value.isString()) return false;
-    m_name = value.toString();
-
-    value = json["object"];
-    if(!value.isObject()) return false;
-    QJsonObject obj = value.toObject();
-
-    m_canvasObject = L_ShapeBuilder(obj["type"])
-                             .angle(obj["angle"])
-                             .color(obj["color"])
-                             .pos  (obj["position"])
-                             .size (obj["size"])
-                             .build(L_ShapeBuilder::Build::onlyValid);
-
-    value = json["sub"];
-    if(value.isArray())
-    {
-        QJsonArray array = value.toArray();
-        for(auto a: array){
-            L_TaskObject* tobj = new L_TaskObject();
-            QJsonObject obj = a.toObject();
-            tobj->fromJSON(obj);
-            m_subTaskObjects.push_back(tobj);
-        }
-    }
-    return true;
+    delete m_canvasObject;
+    m_canvasObject = object;
+    emit objectPushed();
 }
 
-QString L_TaskObject::name()
+void L_TaskObject::popObject()
+{
+    delete m_canvasObject;
+    m_canvasObject = nullptr;
+    emit objectPopped();
+}
+
+QString L_TaskObject::name() const
 {
     return m_name;
 }
 
-L_CanvasObject* L_TaskObject::object()
+L_CanvasObject *L_TaskObject::object()
 {
     return m_canvasObject;
 }
 
-void L_TaskObject::getTape(QVector<L_TaskObject *> &dist)
+L_TaskObject *L_TaskObject::begin()
 {
-    dist.append(this);
-    for(auto a: qAsConst(m_subTaskObjects))
-        a->getTape(dist);
+    if (m_subTaskObjects.empty()) return nullptr;
+    return m_subTaskObjects.front();
 }
 
-L_TaskObject *L_TaskObject::next()
+L_TaskObject* L_TaskObject::next(L_TaskObject *object)
 {
-    if (current < m_subTaskObjects.size()) {
-        current++;
-        return m_subTaskObjects[current - 1];
+    if (object == nullptr) {
+        if (m_subTaskObjects.empty())
+            return safe_call_pfunction(m_parentTaskObject, &L_TaskObject::next, this);
+        else
+            return m_subTaskObjects.front();
     }
-    if (m_parentTaskObject)
-    return m_parentTaskObject->next();
+
+    auto res = std::find(m_subTaskObjects.begin(), m_subTaskObjects.end(), object);
+    assert(res != m_subTaskObjects.end());
+
+    if (++res == m_subTaskObjects.end())
+        return safe_call_pfunction(m_parentTaskObject, &L_TaskObject::next, this);
+    else
+        return *res;
 }
+
+L_TaskObject* L_TaskObject::previous(L_TaskObject *object)
+{
+    if (object == nullptr)
+        return safe_call_pfunction(m_parentTaskObject, &L_TaskObject::previous, this);
+
+    auto res = std::find(m_subTaskObjects.begin(), m_subTaskObjects.end(), object);
+    if (res == m_subTaskObjects.begin())
+        return this;
+    else
+        return (*std::prev(res))->end();
+}
+
+L_TaskObject* L_TaskObject::end()
+{
+    if (m_subTaskObjects.empty()) return this;
+    return m_subTaskObjects.back()->end();
+}
+

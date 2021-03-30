@@ -16,4 +16,5 @@ void L_TCanvasObject::stop()
 {
     m_timer.stop();
     m_timer.disconnect();
+    qDebug() << m_timer.isActive();
 }
